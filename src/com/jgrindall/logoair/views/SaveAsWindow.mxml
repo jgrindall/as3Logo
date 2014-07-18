@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="90%" height="90%"
+				implements = "com.jgrindall.logoair.views.ILogoPopUp" creationComplete="onCC();"
+				showCloseButton="true" close="onClose();" minWidth="380" minHeight="250"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off" title="Choose a filename..."
+				paddingBottom="10" paddingTop="10" paddingLeft="10" paddingRight="10"
+				
+				>
+	
+
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.events.LogoFileEvent;
+			import com.jgrindall.logoair.events.SystemEvent;
+			import com.jgrindall.logoair.utils.StringUtils;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			public static const ERROR:String="Filenames must be between 3\nand 12 characters, and alphanumeric";
+			
+			private function close():void{
+				destroy();
+				PopUpManager.removePopUp(this);
+			}
+			private function onClose():void{
+				close();
+			}
+			public function destroy():void{
+				myInput.text="";
+				error.text="";
+			}
+			public function setData(obj:Object):void{
+				
+			}
+			private function onCC():void{
+			
+			}
+			
+			private function onClickOk():void{
+				var s:String = myInput.text;
+				var len:Boolean = s && s!="" && s.length>=3 && s.length<=12;
+				var alpha:Boolean = StringUtils.isAlphaNumeric(s);
+				var ok:Boolean = len && alpha;
+				if(!ok){
+					error.text=SaveAsWindow.ERROR;
+				}
+				else{
+					this.dispatchEvent(new LogoFileEvent(LogoFileEvent.CHOOSE_FILE_NAME,s));
+					close();
+				}
+			}
+			private function onClickCancel():void{
+				//
+				close();
+			}
+		]]>
+	</mx:Script>
+	
+		<mx:VBox width="100%" id="vbox" height="100%"
+				 horizontalScrollPolicy="off" verticalScrollPolicy="off"
+				 horizontalAlign="center" verticalAlign="middle">
+			
+			<mx:Label text="Filename:"/>
+			
+			<mx:TextInput id="myInput" restrict="a-zA-Z0-9" maxChars="12" />
+			
+			<mx:Label id="error" text=""/>
+			
+			<mx:HBox width="100%" horizontalAlign="center" >
+				
+				<mx:Button label="Ok" click="onClickOk();"/>
+				
+				<mx:Button label="Cancel" click="onClickCancel();"/>
+				
+			</mx:HBox>
+			
+		</mx:VBox>
+	
+</mx:TitleWindow>

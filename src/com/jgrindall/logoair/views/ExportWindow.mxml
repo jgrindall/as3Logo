@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="90%" height="90%"
+				implements = "com.jgrindall.logoair.views.ILogoPopUp" creationComplete="onCC();"
+				showCloseButton="true" close="onClose();" minWidth="400" minHeight="350"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off" title="Export to JPEG"
+				paddingBottom="10" paddingTop="10" paddingLeft="10" paddingRight="10"
+				xmlns:comp="com.jgrindall.logoair.views.components.*" 
+				>
+
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.events.IOEvent;
+			import com.jgrindall.logoair.events.SystemEvent;
+			import com.jgrindall.logoair.utils.ImageObj;
+			import com.jgrindall.logoair.utils.StringUtils;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			private var _bData:BitmapData;
+			private var _qual:int;
+			private var _rect:Rectangle;
+			
+			private function close():void{
+				destroy();
+				PopUpManager.removePopUp(this);
+			}
+			private function onClose():void{
+				close();
+			}
+			public function destroy():void{
+				cropper.destroy();
+			}
+			public function setData(obj:Object):void{
+				var img:ImageObj = obj as ImageObj;
+				_bData = img.getBitmap();
+				_rect = img.getRect();
+				_qual = img.getQuality();
+			}
+			private function onCC():void{
+				var bitmap:Bitmap = new Bitmap(_bData);
+				cropper.setImg(bitmap);
+				cropper.setRect(_rect);
+				qSlider.value = _qual;
+			}
+			private function onClickExport():void{
+				var r:Rectangle = new Rectangle(0,0,100,100);
+				var obj:ImageObj = new ImageObj(cropper.getCropRect(),qSlider.value,null);
+				this.dispatchEvent(new SystemEvent(SystemEvent.UPDATE_IMAGE_OBJ,obj));
+				this.dispatchEvent(new IOEvent(IOEvent.DO_EXPORT));
+				close();
+			}
+			private function onClickCancel():void{
+				close();
+			}
+		]]>
+	</mx:Script>
+	
+		<mx:VBox width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+			
+			<mx:Label text="Crop your image if required" />
+		
+			<mx:VBox width="100%" id="vbox" height="100%"
+					 horizontalScrollPolicy="off" verticalScrollPolicy="off"
+					 horizontalAlign="center" verticalAlign="middle">
+				
+				<comp:Cropper id="cropper" maxHeight="200" maxWidth="400" />
+			
+			</mx:VBox>
+			
+			
+			<mx:Label text="Choose the JPG quality" />
+			
+			<mx:VBox width="100%" id="vbox2" height="100%"
+					 horizontalScrollPolicy="off" verticalScrollPolicy="off"
+					 horizontalAlign="center" verticalAlign="middle">
+				
+				<mx:HSlider id="qSlider" minimum="0" maximum="100" />
+			
+			</mx:VBox>
+			
+			
+			<mx:HBox width="100%" horizontalAlign="center" >
+				
+				<mx:Button label="Export" click="onClickExport();"/>
+				
+				<mx:Button label="Cancel" click="onClickCancel();"/>
+				
+			</mx:HBox>
+				
+		</mx:VBox>
+			
+</mx:TitleWindow>

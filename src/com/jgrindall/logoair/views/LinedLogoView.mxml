@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 height="100%"
+		 paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" verticalGap="0"  >
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.antlrtut.action.error.ErrorObject;
+			
+			private var _lineNum:int=-1;
+			
+			private function onCC():void{
+				
+			}
+			
+			private function onResize():void{
+				redrawLines();
+				draw();
+			}
+			private function redrawLines():void{
+				lineNumbers.verticalScrollPosition=this.logoText.verticalScrollPosition;
+				var numLines:int = logoText.mx_internal::getTextField().numLines;
+				var s:String="";
+				for(var i:int=1;i<=numLines;i++){
+					s+=i+"\n";
+				}
+				lineNumbers.text=s;
+				this.invalidateDisplayList();
+			}
+			public function getLogo():String{
+				return logoText.text;
+			}
+			public function clearBug():void{
+				if(_lineNum>=0){
+					var g:Graphics = highlight.graphics;
+					g.clear();
+					_lineNum=-1;
+				}
+			}
+			private function draw():void{
+				if(_lineNum>=0){
+					var g:Graphics = highlight.graphics;
+					g.clear();
+					var met:TextLineMetrics =  logoText.mx_internal::getTextField().getLineMetrics( 0 );
+					g.lineStyle(0,0x000000,0);
+					g.beginFill(0xFF0000,0.3);
+					g.drawRect(logoText.x,logoText.y+met.height*_lineNum,logoText.width,met.height);
+					g.endFill();
+				}
+			}
+			public function displayBug(e:ErrorObject):void{
+				trace("char is "+e.getChar());
+				var charNum:int=e.getChar();
+				_lineNum = logoText.mx_internal::getTextField().getLineIndexOfChar( charNum );
+				draw();
+				
+			}
+			public function setLogo(s:String):void{
+				logoText.text=s;
+				redrawLines();
+			}
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:VBox width="100%" height="100%"
+			 backgroundAlpha="0" borderStyle="solid" borderThickness="0"
+			 backgroundColor="#FFFFFF" verticalGap="0" 
+			 >
+		
+		
+		
+		<mx:HBox width="100%" height="100%" verticalGap="0">
+			
+			
+			<mx:TextArea textAlign="right" text="" editable="false" verticalScrollPolicy="off" backgroundAlpha="0"
+						 horizontalScrollPolicy="off" wordWrap="false" id="lineNumbers" alpha="0.4"
+						 width="25" height="100%" color="#FFFFFF" fontFamily="Courier New" fontSize="16" borderStyle="none"
+						 />	
+			
+			<mx:VRule strokeColor="#FFFFFF" height="100%" alpha="0.1"/>
+			
+			<mx:Canvas id="container" width="100%" height="100%">
+				
+				<mx:Canvas id="highlight" width="100%" height="100%"/>
+				
+				<mx:TextArea wordWrap="false" change="redrawLines();" resize="onResize();" scroll="redrawLines();"
+							 id="logoText" width="100%" height="100%" backgroundAlpha="0" focusAlpha="0"
+							 color="#FFFFFF" fontSize="16"
+							 borderStyle="none"
+							 horizontalScrollPolicy="off" verticalScrollPolicy="off" fontFamily="Courier New"
+							 />	
+				
+				
+				<mx:Button id="bug" toolTip="Show/hide bugs" bottom="1" right="1" label="" styleName="invisButton" icon="@Embed(source='assets/speech.png')"/>
+				
+			</mx:Canvas>
+			
+		</mx:HBox>
+		
+		
+	</mx:VBox>
+	
+</mx:VBox>
+
+

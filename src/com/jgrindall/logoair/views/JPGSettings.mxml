@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" label="JPG Export" creationComplete="onCC();"
+		 implements = "com.jgrindall.logoair.views.ISettingsTab" 
+		 >
+		
+	<mx:Script>
+		<![CDATA[
+			
+			import com.jgrindall.logoair.events.SettingsEvent;
+			import com.jgrindall.logoair.utils.SettingsObj;
+			
+			import mx.managers.PopUpManager;
+			
+			private var _obj:SettingsObj;
+			
+			private function onCC():void{
+				draw();
+			}
+			
+			public function destroy():void{
+				
+			}
+			public function setData(obj:Object):void{
+				_obj = obj as SettingsObj;
+				draw();
+			}
+			public function draw():void{
+				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+
+	
+</mx:VBox>

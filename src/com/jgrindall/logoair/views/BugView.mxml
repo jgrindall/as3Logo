@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	
+	<mx:TextArea width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" focusAlpha="0"
+				backgroundColor="#34495e"
+				 id="bugs" backgroundAlpha="0.1" borderStyle="none"
+				 color="#FFFFFF" enabled="false" />
+	
+</mx:VBox>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" showCloseButton="true" close="closeHandler(event)"
+				layout="absolute" creationComplete="onCC();" minWidth="400" minHeight="300"
+				implements="com.jgrindall.logoair.views.ILogoPopUp"
+				xmlns:views = "com.jgrindall.logoair.views.*" title="Settings"
+				>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.events.SettingsEvent;
+			import com.jgrindall.logoair.events.SystemEvent;
+			import com.jgrindall.logoair.utils.MessageObj;
+			import com.jgrindall.logoair.utils.SettingsObj;
+			import com.jgrindall.logoair.views.components.CircleLoader;
+			
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			private var _obj:SettingsObj;
+			
+			private function onCC():void{
+				draw();
+				addListeners(true);
+			}
+			private function addListeners(tf:Boolean):void{
+				for(var i:int=0;i<=nav.numChildren-1;i++){
+					var tab:ISettingsTab = nav.getChildAt(i) as ISettingsTab;
+					if(tab){
+						if(tf){
+							tab.addEventListener(SettingsEvent.CHANGE,onChange);
+						}
+						else{
+							tab.removeEventListener(SettingsEvent.CHANGE,onChange);
+						}
+					}
+				}
+			}
+			private function onChange(e:SettingsEvent):void{
+				_obj = e.getData() as SettingsObj;
+				this.dispatchEvent(new SystemEvent(SystemEvent.CHANGE_SETTINGS,_obj));
+			}
+
+			public function destroy():void{
+				addListeners(false);
+				for(var i:int=0;i<=nav.numChildren-1;i++){
+					var tab:ISettingsTab = nav.getChildAt(i) as ISettingsTab;
+					if(tab){
+						tab.destroy();
+					}
+				}
+			}
+			protected function draw():void{
+				if(nav && _obj){
+					for(var i:int=0;i<=nav.numChildren-1;i++){
+						var tab:ISettingsTab = nav.getChildAt(i) as ISettingsTab;
+						if(tab){
+							tab.setData(_obj);
+						}
+					}
+				}
+			}
+			public function setData(obj:Object):void{
+				_obj = obj as SettingsObj;
+				draw();
+			}
+			protected function closeHandler(event:CloseEvent):void{
+				this.destroy();
+				PopUpManager.removePopUp(this);
+			}
+			private function okClick():void{
+				this.dispatchEvent(new SettingsEvent(SettingsEvent.CHANGE,_obj));
+				cancelClick();
+			}
+			private function cancelClick():void{
+				this.destroy();
+				PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</mx:Script>
+	
+		<mx:VBox paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10" width="100%" height="100%" >
+			
+		
+		
+		<mx:TabNavigator creationPolicy="all" id="nav" width="100%" height="100%"
+						 paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+		
+			<views:JPGSettings width="100%" height="100%" id="tab1"/>
+			
+			<views:FBSettings width="100%" height="100%" id="tab2"/>
+			
+		</mx:TabNavigator>
+	
+	
+		<mx:HBox width="100%" horizontalAlign="center">
+			<mx:Button label="Ok" click="okClick();"/>
+			<mx:Button label="Cancel" click="cancelClick();"/>
+		</mx:HBox>
+	
+		</mx:VBox>
+			
+</mx:TitleWindow>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 height="100%" width="100%" verticalGap="0" creationComplete="onCC();"
+		   >
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.LogoContext;
+			import com.jgrindall.logoair.events.IOEvent;
+			
+			private var context:LogoContext;
+			
+			[Bindable]
+			public var configXML:XML;
+			
+			[Bindable]
+			public var lInfo:LoaderInfo;
+			
+			private function onCC():void{
+				context = new LogoContext(this,configXML,lInfo);
+			}
+			public function acceptDrag(s:String):void{
+				context.dispatchEvent(new IOEvent(IOEvent.AIR_DRAG,s));
+			}
+			
+		]]>
+	</mx:Script>
+	
+	
+	
+	
+</mx:VBox>
+
+

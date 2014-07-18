@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 xmlns:jg="com.jgrindall.logoair.views.*"
+		 xmlns:comp="com.jgrindall.logoair.views.components.*"
+		 width="100%" height="100%"
+		 paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" creationComplete="onCC();"
+		 horizontalScrollPolicy="off" verticalScrollPolicy="off" resize="onResize(event);"
+		 verticalGap="0"
+		 >
+
+	<mx:Script>
+		<![CDATA[
+			import com.foxaweb.utils.Raster;
+			import com.jgrindall.logoair.events.ImageEvent;
+			import com.jgrindall.logoair.thread.PseudoThread;
+			
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.core.Application;
+			import mx.core.UIComponent;
+			import mx.events.ResizeEvent;
+			import mx.events.ScrollEvent;
+			
+			public static const CANVAS_WIDTH:int=1800;
+			public static const CANVAS_HEIGHT:int=1000;
+			public static const DEFAULT_COLOR:uint=0xFFc0392b;
+			private var _bmp:Bitmap;
+			private var _raster:Raster;
+				
+			private function onCC():void{
+				newRaster();
+				_bmp = new Bitmap(_raster);
+				ui.addChild(_bmp);
+				centre();
+			}
+			
+			private function onResize(e:ResizeEvent=null):void{
+				if(e){
+					e.stopPropagation();
+				}
+				centre();
+			}
+			public function getBitmapData():BitmapData{
+				return _bmp.bitmapData;
+			}
+			public function centre():void{
+				if(canvas.width<DrawingCanvasView.CANVAS_WIDTH){
+					canvas.horizontalScrollPosition = (DrawingCanvasView.CANVAS_WIDTH - canvas.width)/2;
+				}
+				if(canvas.height<DrawingCanvasView.CANVAS_HEIGHT){
+					canvas.verticalScrollPosition = (DrawingCanvasView.CANVAS_HEIGHT - canvas.height)/2;
+				}
+			}
+			public function clear():void{
+				clearBitmap();
+			}
+			private function onScroll(e:Event=null):void{
+				//onResize();
+			}
+			public function drawLine(x0:Number,y0:Number,x1:Number,y1:Number,clr:uint):void{
+				_raster.line(x0,y0,x1,y1,clr);
+			}
+			private function newRaster():void{
+				_raster = new Raster(DrawingCanvasView.CANVAS_WIDTH,DrawingCanvasView.CANVAS_HEIGHT,true,0xFFFFFFF);
+			}
+			public function clearBitmap():void{
+				newRaster();
+				setBitmap();
+			}
+			public function setBitmap():void{
+				_bmp.bitmapData=_raster;
+				this.dispatchEvent(new ImageEvent(ImageEvent.BMP_CHANGED,true));
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:HBox width="100%" height="100%" id="box" 
+			 horizontalAlign="center" verticalAlign="top"
+			 horizontalScrollPolicy="off" verticalScrollPolicy="off"
+			 resize="onResize(event);" scroll="onScroll(event);"	 
+			 >
+		
+		<comp:NoCornerCanvas id="canvas" width="100%" height="100%" backgroundColor="#34495e"
+				   horizontalScrollPolicy="auto" verticalScrollPolicy="auto"
+				   resize="onResize(event);" scroll="onScroll(event);"
+				   >
+						
+			<mx:UIComponent width="{DrawingCanvasView.CANVAS_WIDTH}" height="{DrawingCanvasView.CANVAS_HEIGHT}" id="ui" />
+			
+		</comp:NoCornerCanvas>
+		
+	</mx:HBox>
+
+</mx:VBox>

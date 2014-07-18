@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 xmlns:views="com.jgrindall.logoair.views.*"
+		 creationComplete="onCC();" horizontalScrollPolicy="off" verticalScrollPolicy="off" verticalGap="0">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.utils.MenuUtils;
+			import com.jgrindall.logoair.utils.Version;
+			
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.MenuEvent;
+			
+			protected function onCC():void{
+				vdiv2.getDividerAt(0).y=vdiv2.height-40;
+				
+			}
+			protected function click1(event:MouseEvent):void{
+				vdiv.getDividerAt(0).x=vdiv.width;
+				this.viewLogo.visible = false;
+				this.viewLogo.includeInLayout = false;
+				this.viewGraph.visible = false;
+				this.viewGraph.includeInLayout = false;
+				this.viewBoth.visible = true;
+				this.viewBoth.includeInLayout = true;
+			}
+			protected function click2(event:MouseEvent):void{
+				vdiv.getDividerAt(0).x=0;
+				this.viewLogo.visible = true;
+				this.viewLogo.includeInLayout = true;
+				this.viewGraph.visible = false;
+				this.viewGraph.includeInLayout = false;
+				this.viewBoth.visible = false;
+				this.viewBoth.includeInLayout = false;
+			}
+			protected function click3(event:MouseEvent):void{
+				vdiv.getDividerAt(0).x=vdiv.width*0.5;
+				this.viewLogo.visible = false;
+				this.viewLogo.includeInLayout = false;
+				this.viewGraph.visible = true;
+				this.viewGraph.includeInLayout = true;
+				this.viewBoth.visible = false;
+				this.viewBoth.includeInLayout = false;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:HBox width="100%" horizontalScrollPolicy="off" verticalAlign="middle" verticalScrollPolicy="off" verticalGap="0">
+		
+		<mx:Text fontSize="26" text="Logotacular">
+			
+		</mx:Text>
+		<!-- <views:TopMenu id="menubar" labelField="@label" iconField="@icon" />  -->
+		
+		<views:FileInfoView width="100%"/>  
+		
+		<views:ControlButtons />
+		
+		<mx:Spacer height="10" width="5" />
+		
+		<mx:Button width="40" toolTip="View Logo code"  includeInLayout="false" visible="false" label="" id="viewLogo" 	styleName="invisButton" icon="@Embed(source='assets/doc.png')" click="click1(event)" />
+		<mx:Button width="40" toolTip="View graphics"    label="" id="viewGraph" styleName="invisButton" icon="@Embed(source='assets/pencil.png')" click="click2(event)" />
+		<mx:Button width="40" toolTip="View both"  	includeInLayout="false"	visible="false"	label="" id="viewBoth"	styleName="invisButton" icon="@Embed(source='assets/both.png')" click="click3(event)" />
+		<mx:Spacer height="10" width="5" />
+	</mx:HBox>
+	
+	<mx:HDividedBox width="100%" height="100%" id="vdiv" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+			
+		<mx:VDividedBox width="100%" height="100%" id="vdiv2">
+			
+			<views:LinedLogoView width="100%" height="100%" id="logo"/>
+			
+			<views:BugView width="100%" />
+			
+		</mx:VDividedBox>
+		
+		<views:DrawingCanvasView width="100%" height="100%" />
+		
+	</mx:HDividedBox>
+	
+	<views:PopUpHolder />
+	
+</mx:VBox>

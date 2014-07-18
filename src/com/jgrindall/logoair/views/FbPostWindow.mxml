@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="90%" height="90%"
+				implements = "com.jgrindall.logoair.views.ILogoPopUp" creationComplete="onCC();"
+				showCloseButton="true" close="onClose();" minWidth="400" minHeight="350"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off" title="Post to Facebook photos"
+				paddingBottom="10" paddingTop="10" paddingLeft="10" paddingRight="10"
+				xmlns:comp="com.jgrindall.logoair.views.components.*"
+				
+				>
+	
+
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.events.*;
+			import com.jgrindall.logoair.utils.*;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			private var _bData:BitmapData;
+			private var _qual:int;
+			private var _rect:Rectangle;
+			
+			private function close():void{
+				destroy();
+				PopUpManager.removePopUp(this);
+			}
+			private function onClose():void{
+				close();
+			}
+			public function destroy():void{
+				cropper.destroy();
+				myInput.text="";
+			}
+			public function setData(obj:Object):void{
+				var imgObj:ImageObj = obj as ImageObj;
+				_bData = imgObj.getBitmap();
+				_rect = imgObj.getRect();
+				_qual = imgObj.getQuality();
+			}
+			private function onCC():void{
+				var bitmap:Bitmap = new Bitmap(_bData);
+				cropper.setImg(bitmap);
+				cropper.setRect(_rect);
+				qSlider.value = _qual;
+			}
+			private function onClickPost():void{
+				var s:String = myInput.text;
+				_rect = cropper.getCropRect();
+				var imgObj:ImageObj = new ImageObj(_rect,qSlider.value,null);
+				var croppedBD:BitmapData = new BitmapData(_rect.width, _rect.height);
+				var crop:Rectangle = new Rectangle(_rect.x,_rect.y,_rect.width, _rect.height);
+				croppedBD.copyPixels(_bData,crop,new Point(0,0));
+				this.dispatchEvent(new SystemEvent(SystemEvent.UPDATE_IMAGE_OBJ,imgObj ));
+				var fbObj:FbPostObj = new FbPostObj(s,croppedBD);
+				this.dispatchEvent(new IOEvent(IOEvent.DO_FACEBOOK_POST,fbObj));
+				close();
+			}
+			private function onClickCancel():void{
+				close();
+			}
+		]]>
+	</mx:Script>
+	
+		<mx:VBox width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+			
+			<mx:Label text="Crop your image before posting" id="msgBox"/>
+				
+			<mx:VBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				
+				<comp:Cropper id="cropper" maxHeight="200" maxWidth="400" />
+		
+			</mx:VBox>
+			
+			<mx:Label text="Set the JPG quality" />
+			
+			<mx:HSlider minimum="0" maximum="100" id="qSlider"/>
+			
+			<mx:Label text="Enter your caption" />
+			
+			<mx:VBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				
+				<mx:TextArea id="myInput" width="100%" height="50" backgroundAlpha="0.1" focusAlpha="0"
+							 color="#FFFFFF" fontSize="12"
+							 borderStyle="solid" borderThickness="1" borderColor="#555555"/>
+				
+			</mx:VBox>
+				
+			<mx:HBox width="100%" horizontalAlign="center" >
+				
+				<mx:Button label="Post!" click="onClickPost();"/>
+				
+				<mx:Button label="Cancel" click="onClickCancel();"/>
+				
+			</mx:HBox>
+		
+		</mx:VBox>
+	
+</mx:TitleWindow>

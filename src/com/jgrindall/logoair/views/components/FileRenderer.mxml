@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" maxHeight="128" height="128"
+		 horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.views.components.help.CustomToolTip;
+			
+			import mx.events.ToolTipEvent;
+			
+			override public function set data(val:Object):void{
+				super.data = val;
+				if(data && data.ownerid && data.imageurl){
+					myImg.source = "http://www.logotacular.com/saves/"+data.ownerid+"/"+data.imageurl+".jpg";
+				}
+			}
+			private function ttCreate(e:ToolTipEvent):void{
+				var toolTip:CustomToolTip = new CustomToolTip();
+				toolTip.src = (e.target as Image).source;
+				e.toolTip = toolTip;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:HBox horizontalScrollPolicy="off" verticalScrollPolicy="off" width="60%">
+		
+		<mx:Label id="myLabel" text="{data.imageurl}" width="100%"/>
+		
+		<mx:Text id="myText" text="{data.filecontents}" width="100%"  />
+			
+	</mx:HBox>
+	
+	<mx:Image id="myImg" toolTip=" " toolTipCreate="ttCreate(event);" autoLoad="true" maintainAspectRatio="true" scaleContent="true" width="100%" height="100%" />
+	
+</mx:HBox>

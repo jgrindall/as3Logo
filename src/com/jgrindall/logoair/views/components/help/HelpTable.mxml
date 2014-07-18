@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+	
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.containers.HBox;
+			import mx.controls.HRule;
+			import mx.controls.Text;
+			
+			private function addNewRow(texts:Array,widths:Array):DisplayObject{
+				var h:HBox = new HBox();
+				h.percentWidth=100;
+				for(var i:int=0;i<=texts.length-1;i++){
+					var t:Text = new Text();
+					t.text = texts[i];
+					t.percentWidth=widths[i];
+					h.addChild(t);
+				}
+				return h;
+			}
+			override protected function createChildren():void{
+				super.createChildren();
+				var c:Array = this.getCommands();
+				var e:Array = this.getExplanations();
+				for(var i:int=0;i<=c.length-1;i++){
+					var row:DisplayObject = addNewRow([c[i],e[i]],[36,56]);
+					this.addChild(row);
+					if(i!=c.length-1){
+						var hr:HRule = new HRule();
+						hr.percentWidth=100;
+						hr.setStyle("strokeColor","#666666");
+						this.addChild(hr);	
+					}
+				}
+			}
+			
+			protected function getCommands():Array{
+				var a:Array=[];
+				a.push("fd(100);");
+				a.push("rt(90);");
+				a.push("rpt 4 [\n fd(100);\n rt(90);\n]");
+				a.push("i:=360/4;");
+				a.push("i:=4*i + 45;");
+				a.push("proc drawSquare(){\n rpt 4[\n  fd(100);\n  rt(90);\n ]\n}\ndrawSquare();");
+				a.push("proc drawPoly(n,s){\n rpt n[\n  fd(s);\n  rt(360/n);\n ]\n}\ndrawPoly(7,60);");
+				a.push("color(red);");
+				a.push("penUp();");
+				a.push("penDown();");
+				a.push("home();");
+				a.push("reset();");
+				a.push("clear();");
+				a.push("moveTo(100,100);");
+				
+				return a;
+			}
+			protected function getExplanations():Array{
+				var a:Array=[];
+				a.push("Go forward 100 units");
+				a.push("Turn right 90 degrees clockwise");
+				a.push("\nRepeat the statements inside the brackets 4 times");
+				a.push("Define the variable 'i' and set it equal to 90");
+				a.push("Multiply 'i' by 4 and then add 45");
+				a.push("\nA procedure called drawSquare is defined and called");
+				a.push("\nA procedure called drawPolygon, taking 2 input variables is defined and called");
+				a.push("Set the pen color to red  (allowed values: red,black,blue,green)");
+				a.push("Pick the pen up from the paper (lines will not not drawn)");
+				a.push("Put the pen to paper");
+				a.push("Move back to the centre and set the rotation back to zero");
+				a.push("Move to the centre, set rotation to zero, put the pen down, set the color to black and clear the screen");
+				a.push("Clear the screen only");
+				a.push("Move to the point (100,100) without drawing");
+				
+				return a;
+			}
+			
+		]]>
+	</mx:Script>
+	
+</mx:VBox>

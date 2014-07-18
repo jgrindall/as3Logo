@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300">
+	
+	<mx:Script>
+		<![CDATA[
+			
+			override public function validateDisplayList():void {    
+				super.validateDisplayList();    
+				
+				var i:int = rawChildren.numChildren;    
+				while ( --i >= 0 ){
+					var obj:DisplayObject = rawChildren.getChildAt( i );    
+					if ( obj.name == "whiteBox" ){   
+						var whiteBox:Shape = obj as Shape;
+						var g:Graphics = whiteBox.graphics;
+						g.clear();
+						g.beginFill(0x333333,1);
+						g.drawRect(0,0,whiteBox.width,whiteBox.height);
+						g.endFill();
+						break;
+					}
+				}
+			}         
+			
+		]]>
+	</mx:Script>
+	
+</mx:Canvas>

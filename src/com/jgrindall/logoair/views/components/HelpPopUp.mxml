@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="Help"
+				showCloseButton="true" close="onClose(event)"
+				verticalScrollPolicy="off" horizontalScrollPolicy="off" 
+				xmlns:help="com.jgrindall.logoair.views.components.help.*" creationComplete="onCC();"
+				>
+	
+	<mx:Script>
+		<![CDATA[
+			import flash.net.*;
+			
+			import mx.containers.HBox;
+			import mx.containers.VBox;
+			import mx.controls.Button;
+			import mx.controls.HRule;
+			import mx.controls.Label;
+			import mx.controls.Spacer;
+			import mx.controls.Text;
+			import mx.controls.TextArea;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.skins.halo.HaloBorder;
+		
+			override protected function createChildren():void{
+				super.createChildren();
+			}
+			private function onCC():void{
+				rollOutLabel();
+			}
+			private function doClose():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function onClose(event:CloseEvent):void{
+				doClose();
+			}
+			private function rollOverLabel():void{
+				helpLabel.htmlText="For more information see <a href='event:help'><u>www.logotacular.com</u></a>" ;
+			}
+			private function rollOutLabel():void{
+				helpLabel.htmlText="For more information see <a href='event:help'>www.logotacular.com</a>";
+			}
+			private function onLink(e:TextEvent):void{
+				var req:URLRequest = new URLRequest("http://www.logotacular.com");
+				navigateToURL(req,'blank');
+			}
+		]]>
+	</mx:Script>
+	
+	
+	<mx:VBox verticalGap="3" width="100%">
+		
+		<mx:Label toolTip="Click to go to www.logotacular.com" selectable="true" link="onLink(event);" rollOver="rollOverLabel()" rollOut="rollOutLabel()" id="helpLabel" />
+		
+		<mx:HRule strokeColor="#666666" width="100%"/>
+		
+		<help:HelpTable width="100%" height="{this.height-100}" />
+		
+		<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle" paddingTop="6">
+			
+			<mx:Button label="Ok" click="doClose();" />
+			
+		</mx:HBox>
+		
+	</mx:VBox>
+	
+	
+</mx:TitleWindow>
+

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="onCC();"
+		   width="{DrawingCanvasView.CANVAS_WIDTH*Cropper.SF}" height="{DrawingCanvasView.CANVAS_HEIGHT*Cropper.SF}">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.views.DrawingCanvasView;
+			
+			import org.antlr.runtime.RecognitionException;
+			
+			private var _rect:Rectangle;
+			private var draggers:Array=[];
+			private static const RADIUS:int=3;
+			private static const SF:Number = .16;
+			
+			override protected function createChildren():void{
+				super.createChildren();
+				draw();
+			}
+			public function destroy():void{
+				this.img.source=null;
+				for(var i:int=0;i<=3;i++){
+					var b:MovieClip = this.getBlob(i);
+					if(b){
+						b.removeEventListener(MouseEvent.MOUSE_UP,onMU);
+						b.removeEventListener(MouseEvent.MOUSE_MOVE,onMM);
+						b.removeEventListener(MouseEvent.MOUSE_DOWN,onMD);
+					}
+				}
+				while(ui.numChildren>=1){
+					ui.removeChildAt(0);
+				}
+				draggers=[];
+			}
+			private function onCC():void{
+				draw();
+			}
+			private function onMU(e:MouseEvent):void{
+				var b:MovieClip = e.target as MovieClip;
+				b.removeEventListener(MouseEvent.MOUSE_UP,onMU);
+				b.removeEventListener(MouseEvent.MOUSE_MOVE,onMM);
+				b.stopDrag();
+			}
+			private function redraw(i:int):void{
+				if(i==0){
+					getBlob(1).y = getBlob(i).y;
+					getBlob(3).x = getBlob(i).x;
+				}
+				else if(i==2){
+					getBlob(3).y = getBlob(i).y;
+					getBlob(1).x = getBlob(i).x;	
+				}
+				fill();
+			}
+			private function getBlob(i:int):MovieClip{
+				try{
+					return ui.getChildAt(i) as MovieClip;
+				}
+				catch(e:Error){
+					return null;
+				}
+				return null;
+			}
+			private function onMM(e:MouseEvent):void{
+				redraw((e.target as MovieClip).data);
+			}
+			private function onMD(e:MouseEvent):void{
+				var b:MovieClip = e.target as MovieClip;
+				var i:int = b.data;
+				var r:Rectangle;
+				if(i==0){
+					r = new Rectangle(0,0,getBlob(2).x,getBlob(2).y);
+				}
+				else if(i==2){
+					r = new Rectangle(getBlob(0).x,getBlob(0).y,this.width - getBlob(0).x,this.height-getBlob(0).y);
+				}
+				b.startDrag(true,r);
+				b.addEventListener(MouseEvent.MOUSE_UP,onMU);
+				b.addEventListener(MouseEvent.MOUSE_MOVE,onMM);
+			}
+			public function setImg(b:Bitmap):void{
+				img.source = b;
+				draw();
+			}
+			private function fill():void{
+				var g:Graphics = ui.graphics;
+				g.clear();
+				g.lineStyle(0,0,0);
+				g.beginFill(0xFF0000,0.1);
+				var x:int = getBlob(0).x;
+				var y:int = getBlob(0).y;
+				var w:int = (getBlob(2).x-getBlob(0).x);
+				var h:int = (getBlob(2).y-getBlob(0).y);
+				g.drawRect(x,y,w,h);
+				g.endFill();
+			}
+			public function getCropRect():Rectangle{
+				var x:int = getBlob(0).x/Cropper.SF;
+				var y:int = getBlob(0).y/Cropper.SF;
+				var w:int = (getBlob(2).x-getBlob(0).x)/Cropper.SF;
+				var h:int = (getBlob(2).y-getBlob(0).y)/Cropper.SF;
+				w = Math.max(1,w);
+				h = Math.max(1,h);
+				return new Rectangle(x,y,w,h);
+			}
+			public function setRect(r:Rectangle):void{
+				_rect = r;
+				draw();
+			}
+			public function draw():void{
+				if(ui && _rect){
+					for(var i:int=0;i<=3;i++){
+						var d:MovieClip = new MovieClip();
+						var g:Graphics = d.graphics;
+						g.lineStyle(0,0x00FF00,0);
+						if(i==0 || i==2){
+							g.beginFill(0xFF0000,1);
+						}
+						else{
+							g.beginFill(0xFF0000,0.3);
+						}
+						g.drawCircle(0,0,Cropper.RADIUS);
+						g.endFill();
+						draggers.push(d);
+						ui.addChild(d);
+						d.data = i;
+						if(i==0){
+							d.x=_rect.x*Cropper.SF;
+							d.y=_rect.y*Cropper.SF;
+						}
+						else if(i==1){
+							d.x=(_rect.x+_rect.width)*Cropper.SF;
+							d.y=_rect.y*Cropper.SF;
+						}
+						else if(i==2){
+							d.x=(_rect.x+_rect.width)*Cropper.SF;
+							d.y=(_rect.y+_rect.height)*Cropper.SF;
+						}
+						else if(i==3){
+							d.x=_rect.x*Cropper.SF;
+							d.y=(_rect.y+_rect.height)*Cropper.SF;
+						}
+						if(i==0 || i==2){
+							d.addEventListener(MouseEvent.MOUSE_DOWN,onMD);
+							d.buttonMode=true;
+						}
+					}
+					fill();
+				}
+			}
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:Image width="{DrawingCanvasView.CANVAS_WIDTH*Cropper.SF}" height="{DrawingCanvasView.CANVAS_HEIGHT*Cropper.SF}" id="img" scaleContent="true" maintainAspectRatio="true"/>
+	
+	<mx:UIComponent id="ui" width="{DrawingCanvasView.CANVAS_WIDTH*Cropper.SF}" height="{DrawingCanvasView.CANVAS_HEIGHT*Cropper.SF}"/>
+	
+	
+</mx:Canvas>

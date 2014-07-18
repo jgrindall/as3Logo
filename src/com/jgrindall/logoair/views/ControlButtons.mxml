@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" >
+	
+	
+	<mx:Script>
+		<![CDATA[
+			
+			public function enableDraw(tf:Boolean):void{
+				startBut.visible=startBut.includeInLayout=tf;
+				stopBut.visible=stopBut.includeInLayout=!tf;
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Button styleName="invisButton" width="42" toolTip="Start" 			label="" id="startBut" 	icon="@Embed(source='assets/play.png')"/>
+	<mx:Button styleName="invisButton" width="42" toolTip="Stop" 			label="" id="stopBut"	icon="@Embed(source='assets/stop.png')" visible="false" includeInLayout="false"  />
+	<mx:Spacer height="10" width="25" />
+	
+	<mx:Button styleName="invisButton" width="42" toolTip="Help" 			label="" id="helpBut" 	icon="@Embed(source='assets/bulb.png')"/>
+	
+	<mx:Button styleName="invisButton" width="42" toolTip="Centre" 			label="" id="centreBut" icon="@Embed(source='assets/zoom.png')"/>
+	
+	
+</mx:HBox>

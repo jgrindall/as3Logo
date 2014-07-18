@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" creationComplete="onCC();" minWidth="300"
+				implements="com.jgrindall.logoair.views.ILogoPopUp">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.utils.MessageObj;
+			import com.jgrindall.logoair.views.components.CircleLoader;
+		
+			private var _data:MessageObj;
+			
+			[Bindable]
+			public static var IMG_WIDTH:int=100;
+			
+			private function onCC():void{
+				draw();
+			}
+			private function draw():void{
+				if(_data && msg && imgBox && buttonBox){
+					msg.text = _data.getText();
+					this.title = _data.getTitle();
+					drawImage();
+					drawButtons();
+				}
+			}
+			private function drawButtons():void{
+				
+			}
+			private function drawImage():void{
+				if(_data.getIcon()==MessageObj.CIRCLE_LOADER){
+					var c:CircleLoader = new CircleLoader(12,20,MessagePopUp.IMG_WIDTH/2,7,true);
+					ui.addChild(c);
+					//c.x+=c.width/2;
+					//c.y+=c.height/2;
+					//
+				}
+			}
+			public function destroy():void{
+				
+			}
+			public function setData(obj:Object):void{
+				_data = obj as MessageObj;
+				draw();
+			}
+		]]>
+	</mx:Script>
+	
+	
+	<mx:VBox horizontalAlign="center" verticalAlign="middle" width="100%" height="100%"
+			 paddingBottom="20" paddingLeft="20" paddingRight="20" paddingTop="20" verticalGap="10">
+		
+		<mx:HBox width="100%" horizontalAlign="center">
+			
+		
+			<mx:HBox id="imgBox" horizontalAlign="center" verticalAlign="middle"
+					 width="{MessagePopUp.IMG_WIDTH}" height="{MessagePopUp.IMG_WIDTH}"
+					 borderColor="red" borderThickness="0" borderStyle="solid" >
+				
+				<mx:UIComponent id="ui"/>
+				
+			</mx:HBox>
+		
+		</mx:HBox>
+			
+		<mx:Text id="msg" width="100%" textAlign="center" />
+			
+		<mx:HBox id="buttonBox">
+			
+		</mx:HBox>
+		
+	</mx:VBox>
+	
+</mx:TitleWindow>

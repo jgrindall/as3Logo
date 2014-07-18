@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="90%" height="90%"
+				implements = "com.jgrindall.logoair.views.IFilesWindow" creationComplete="onCC();"
+				showCloseButton="true" close="onClose();" maxWidth="{FilesWindow.MAX_WIDTH}" maxHeight="{FilesWindow.MAX_HEIGHT}"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off" title="Open a file..." resize="onResize();"
+				>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.jgrindall.logoair.events.LogoFileEvent;
+			import com.jgrindall.logoair.events.SystemEvent;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			public static var MAX_WIDTH:int=500;
+			public static var MAX_HEIGHT:int=500;
+			
+			
+			private var _files:Array;
+			
+			[Bindable]
+			private var _totalPages:int;
+			
+			[Bindable]
+			private var _pageNum:int=0;
+			
+			private function close():void{
+				destroy();
+				PopUpManager.removePopUp(this);
+			}
+			private function onClose():void{
+				close();
+			}
+			
+			private function onResize():void{
+				list.height=vbox.height-70;
+			}
+			public function destroy():void{
+				list.dataProvider = null;
+			}
+			private function onCC():void{
+				draw();
+				onResize();
+			}
+			private function draw():void{
+				if(myLabel && list && _files){
+					myLabel.text="Page:"+(_pageNum+1)+"/"+_totalPages;
+					list.dataProvider = new ArrayCollection(_files);
+				}
+			}
+			public function setData(obj:Object):void{
+				_totalPages = new int(obj["totalPages"]);
+				_files = obj["files"] as Array;
+				_pageNum = new int (obj["pageNum"]);
+				draw();
+			}
+			private function clickOpen():void{
+				this.dispatchEvent(new LogoFileEvent(LogoFileEvent.OPEN_FILE,list.selectedItem));
+				close();
+			}
+			private function clickCancel():void{
+				close();
+			}
+			private function onClick():void{
+				//
+			}
+			private function clickPrev():void{
+				this.dispatchEvent(new LogoFileEvent(LogoFileEvent.PREV_PAGE,_pageNum));
+				close();
+			}
+			private function clickNext():void{
+				this.dispatchEvent(new LogoFileEvent(LogoFileEvent.NEXT_PAGE,_pageNum));
+				close();
+			}
+		]]>
+	</mx:Script>
+	
+		<mx:VBox width="100%" id="vbox" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+			
+			<mx:List width="100%" id="list" itemClick="onClick();"
+					 itemRenderer="com.jgrindall.logoair.views.components.FileRenderer"/>
+			
+			<mx:Label id="myLabel" height="30"/>
+			
+			<mx:HBox width="100%">
+				<mx:Button label="«Prev" click="clickPrev();" enabled="{_pageNum>=1}"/>
+				
+				
+				<mx:HBox width="100%" horizontalAlign="center">
+					<mx:Button label="Open" click="clickOpen();"/>
+					<mx:Button label="Cancel" click="clickCancel();"/>
+					
+				</mx:HBox>
+				
+				<mx:HBox width="60" horizontalAlign="right">
+					<mx:Button label="Next»" click="clickNext();" enabled="{_pageNum+1!=_totalPages}"/>
+				</mx:HBox>
+				
+			</mx:HBox>
+			
+		</mx:VBox>
+	
+</mx:TitleWindow>

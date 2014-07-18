@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:MenuBar xmlns:mx="http://www.adobe.com/2006/mxml">
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import com.jgrindall.logoair.utils.MenuUtils;	
+			import mx.collections.XMLListCollection;
+			
+			public function regenerateMenu(save:Boolean, online:Boolean,loggedIn:Boolean,fbLoggedIn:Boolean):void{
+				var xml:XML = MenuUtils.getMenuXML(save,online,loggedIn,fbLoggedIn);
+				this.dataProvider = new XMLListCollection(xml.children());
+				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+</mx:MenuBar>
